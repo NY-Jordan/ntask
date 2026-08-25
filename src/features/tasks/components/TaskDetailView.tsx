@@ -5,9 +5,10 @@ import { useCategoryStore } from '../../categories/store/categoryStore';
 import type { Link } from '../types/link';
 import * as linkService from '../services/linkService';
 import { CategoryBadge } from '../../categories/components/CategoryBadge';
+import { DatePicker } from '../../../shared/components/DatePicker';
 import { PRIORITY_LABELS, PRIORITY_MARKERS, PRIORITY_TEXT_COLORS } from '../priority';
 import { formatDateTime, formatRelativeDate, isOverdue, isToday } from '../../../shared/utils/date';
-import { ArrowUpRightIcon, ChevronLeftIcon, CheckCircleIcon, EditIcon, LinkIcon, TrashIcon } from '../../../shared/components/icons';
+import { ArrowUpRightIcon, CalendarIcon, ChevronLeftIcon, CheckCircleIcon, EditIcon, LinkIcon, TrashIcon } from '../../../shared/components/icons';
 
 interface TaskDetailViewProps {
   taskId: string;
@@ -20,6 +21,7 @@ export function TaskDetailView({ taskId, onBack, onEdit, onDeleted }: TaskDetail
   const task = useTaskStore((s) => s.tasks.find((t) => t.id === taskId));
   const category = useCategoryStore((s) => s.categories.find((c) => c.id === task?.categoryId));
   const toggleTask = useTaskStore((s) => s.toggleTask);
+  const updateTask = useTaskStore((s) => s.updateTask);
   const deleteTask = useTaskStore((s) => s.deleteTask);
   const [links, setLinks] = useState<Link[]>([]);
 
@@ -105,33 +107,56 @@ export function TaskDetailView({ taskId, onBack, onEdit, onDeleted }: TaskDetail
 
       <div className="font-mono text-xs text-white/30">Created: {formatDateTime(task.createdAt)}</div>
 
-      <div className="grid grid-cols-3 gap-2">
-        <button
-          onClick={onEdit}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-white/15 py-2.5 text-sm font-medium text-white/80 transition-colors hover:bg-white/5"
-        >
-          <EditIcon className="h-3.5 w-3.5" />
-          Edit
-        </button>
-        <button
-          onClick={() => {
-            deleteTask(taskId);
-            onDeleted();
-          }}
-          className="flex items-center justify-center gap-1.5 rounded-xl border border-rose-500/50 py-2.5 text-sm font-medium text-rose-400 transition-colors hover:bg-rose-500/10"
-        >
-          <TrashIcon className="h-3.5 w-3.5" />
-          Delete
-        </button>
-        <button
-          onClick={() => toggleTask(taskId)}
-          className={`flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-medium transition-colors ${
-            task.completed ? 'border border-white/15 text-white/80 hover:bg-white/5' : 'bg-blue-500 text-white hover:bg-blue-400'
-          }`}
-        >
-          <CheckCircleIcon className="h-3.5 w-3.5" />
-          {task.completed ? 'Reopen' : 'Complete'}
-        </button>
+      <div className="flex items-center justify-center gap-4 pt-1">
+        <div className="flex flex-col items-center gap-1.5">
+          <DatePicker
+            value={task.dueDate ?? ''}
+            onChange={(d) => updateTask(taskId, { dueDate: d || undefined })}
+            allowClear
+            confirmOnSelect
+            icon={<CalendarIcon className="h-4 w-4" />}
+            triggerClassName="flex h-11 w-11 items-center justify-center rounded-full bg-blue-500 text-white transition-colors hover:bg-blue-400"
+          />
+          <span className="text-[10px] font-medium text-white/40">Reporter</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-1.5">
+          <button
+            onClick={onEdit}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-blue-500 text-white transition-colors hover:bg-blue-400"
+            aria-label="Modifier"
+          >
+            <EditIcon className="h-4 w-4" />
+          </button>
+          <span className="text-[10px] font-medium text-white/40">Modifier</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-1.5">
+          <button
+            onClick={() => toggleTask(taskId)}
+            className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors ${
+              task.completed ? 'bg-white/10 text-white/70 hover:bg-white/15' : 'bg-blue-500 text-white hover:bg-blue-400'
+            }`}
+            aria-label={task.completed ? 'Rouvrir' : 'Marquer comme terminée'}
+          >
+            <CheckCircleIcon className="h-4 w-4" />
+          </button>
+          <span className="text-[10px] font-medium text-white/40">{task.completed ? 'Rouvrir' : 'Terminer'}</span>
+        </div>
+
+        <div className="flex flex-col items-center gap-1.5">
+          <button
+            onClick={() => {
+              deleteTask(taskId);
+              onDeleted();
+            }}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-rose-500/15 text-rose-400 transition-colors hover:bg-rose-500/25"
+            aria-label="Supprimer"
+          >
+            <TrashIcon className="h-4 w-4" />
+          </button>
+          <span className="text-[10px] font-medium text-white/40">Supprimer</span>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import type { Priority } from '../types/task';
 import { useTaskStore } from '../store/taskStore';
 import { useCategories } from '../../categories/hooks/useCategories';
 import { CategorySelect } from '../../categories/components/CategorySelect';
+import { DatePicker } from '../../../shared/components/DatePicker';
 import { PrioritySelector } from './PrioritySelector';
 import { UrlAttachmentField, type PendingLink } from './UrlAttachmentField';
 import { todayISODate } from '../../../shared/utils/date';
@@ -99,12 +100,9 @@ export function TaskForm({ taskId, onCancel, onDone }: TaskFormProps) {
 
           <div className="flex-1">
             <label className={labelClass}>Due date</label>
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              className={inputClass}
-            />
+            <div className="mt-1">
+              <DatePicker value={dueDate} onChange={setDueDate} allowClear />
+            </div>
           </div>
         </div>
 

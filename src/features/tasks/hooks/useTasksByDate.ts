@@ -12,7 +12,7 @@ export function useTasksByDate(date: string) {
     }
   }, [isLoaded, loadTasks]);
 
-  const tasksForDate = useMemo(() => tasks.filter((t) => t.createdAt.slice(0, 10) === date), [tasks, date]);
+  const tasksForDate = useMemo(() => tasks.filter((t) => t.dueDate?.slice(0, 10) === date), [tasks, date]);
 
   const completedCount = useMemo(() => tasksForDate.filter((t) => t.completed).length, [tasksForDate]);
 

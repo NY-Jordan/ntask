@@ -6,7 +6,8 @@ import { TaskDetailView } from './TaskDetailView';
 import { ResizeHandle } from './ResizeHandle';
 import { CategoryManagerView } from '../../categories/components/CategoryManagerView';
 import { LinkManagerView } from './LinkManagerView';
-import { CalendarIcon, ChevronLeftIcon, LinkIcon, PinIcon, PlusIcon, TerminalIcon } from '../../../shared/components/icons';
+import { ChevronLeftIcon, LinkIcon, PinIcon, PlusIcon, TerminalIcon } from '../../../shared/components/icons';
+import { DatePicker } from '../../../shared/components/DatePicker';
 import { todayISODate } from '../../../shared/utils/date';
 
 interface TaskPanelProps {
@@ -70,17 +71,13 @@ export function TaskPanel({ mode, onModeChange, onClose, isPinned, onTogglePinne
         <span className="truncate text-center font-mono text-xs text-white/40">[TF] {HEADER_PATHS[mode]}</span>
         {mode === 'list' ? (
           <div className="flex items-center gap-2 justify-self-end">
-            <label
-              className={`flex items-center gap-1 ${selectedDate !== todayISODate() ? 'text-blue-400' : 'text-white/40 hover:text-white/80'}`}
-            >
-              <CalendarIcon className="h-4 w-4 shrink-0" />
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.target.value || todayISODate())}
-                className="w-[6.5rem] bg-transparent font-mono text-xs text-current outline-none [color-scheme:dark]"
-              />
-            </label>
+            <DatePicker
+              value={selectedDate}
+              onChange={(d) => setSelectedDate(d || todayISODate())}
+              triggerClassName={`flex items-center gap-1 text-xs font-mono ${
+                selectedDate !== todayISODate() ? 'text-blue-400' : 'text-white/40 hover:text-white/80'
+              }`}
+            />
             <button
               onClick={() => onModeChange('links')}
               className="text-white/40 hover:text-white/80"
